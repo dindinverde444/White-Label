@@ -21,19 +21,31 @@ Este é um gateway simples que:
 
 ## 🚀 Como usar?
 
-### 1. Instalar Python
-Certifique-se de ter Python instalado no seu computador.
+### 🟢 Versão JavaScript (Funcionando)
 
-### 2. Executar o Gateway
+```bash
+node gateway.js
+```
+
+### 🟡 Versão Python (Precisa configurar)
+
+#### 1. Instalar Python corretamente:
+
+**Windows:**
+1. Baixe do site oficial: https://www.python.org/downloads/
+2. **IMPORTANTE**: Durante a instalação, marque ✅ "Add Python to PATH"
+3. Reinicie o terminal após a instalação
+4. Teste com: `python --version`
+
+**Se não funcionar:**
+- Tente: `py --version`
+- Ou adicione manualmente ao PATH
+
+#### 2. Executar o Gateway Python:
+
 ```bash
 python gateway.py
 ```
-
-### 3. Ver o resultado
-O programa vai mostrar:
-- Como o gateway inicia
-- Como processa diferentes tipos de requisições
-- Estatísticas finais
 
 ## 📚 Explicação do Código
 

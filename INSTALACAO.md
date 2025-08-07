@@ -17,18 +17,36 @@ Se você quiser usar a versão em Python, siga estas instruções:
 #### Windows:
 1. Acesse: https://www.python.org/downloads/
 2. Baixe a versão mais recente (3.11 ou superior)
-3. Durante a instalação, **marque a opção "Add Python to PATH"**
+3. **IMPORTANTE**: Durante a instalação, **marque a opção "Add Python to PATH"**
 4. Reinicie o terminal após a instalação
 
 #### Verificar se funcionou:
 ```bash
 python --version
+# ou
+py --version
 ```
 
 ### 2. Executar o Gateway Python
 
 ```bash
 python gateway.py
+# ou
+py gateway.py
+```
+
+## 🧪 Scripts de Teste Automático
+
+Use estes scripts para testar ambas as versões automaticamente:
+
+### Windows (CMD):
+```bash
+testar_gateway.bat
+```
+
+### Windows (PowerShell):
+```powershell
+.\testar_gateway.ps1
 ```
 
 ## 📚 Diferenças entre as versões
@@ -66,6 +84,19 @@ Este projeto te ensina:
 - ✅ **Logs e registros**
 - ✅ **Estruturas de dados**
 - ✅ **Conceitos de gateway/API**
+
+## 🚨 Solução de Problemas
+
+### Python não encontrado:
+1. Verifique se instalou corretamente
+2. Reinicie o terminal
+3. Tente: `py --version` em vez de `python --version`
+4. Adicione manualmente ao PATH se necessário
+
+### Node.js não encontrado:
+1. Baixe do site oficial: https://nodejs.org/
+2. Instale e reinicie o terminal
+3. Teste com: `node --version`
 
 ---
 
