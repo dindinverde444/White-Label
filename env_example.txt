@@ -1,6 +1,6 @@
 # Configurações do Supabase
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-anon-key
+SUPABASE_URL=https://grxxfwktpqnykagaqzyr.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyeHhmd2t0cHFueWthZ2FxenlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NTI2MzMsImV4cCI6MjA3MDIyODYzM30.7QSpou-7dbDcCFuce7Z5tDLEoP6NisGCbSTlVv5gbk0
 
 # Configurações do Flask
 FLASK_ENV=development
