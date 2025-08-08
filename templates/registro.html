@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Registro - Gateway Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e1e5e9;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0.5rem;
+            font-weight: bold;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-right: 1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .conditional-field {
+            display: none;
+        }
+
+        .conditional-field.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">🚀</div>
+        <h1 class="title">Criar Conta Seller</h1>
+        <p class="subtitle">Complete seu cadastro para começar a vender</p>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+        </div>
+
+        <!-- Step 1: Dados Básicos -->
+        <form id="registerForm" class="form-step active">
+            <div class="form-group">
+                <label for="nome">Nome Completo *</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone *</label>
+                <input type="tel" id="telefone" name="telefone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo_conta">Tipo de Conta *</label>
+                <select id="tipo_conta" name="tipo_conta" required onchange="toggleTipoConta()">
+                    <option value="">Selecione...</option>
+                    <option value="PF">CPF (Pessoa Física)</option>
+                    <option value="PJ">CNPJ (Pessoa Jurídica)</option>
+                </select>
+            </div>
+
+            <!-- Campos para Pessoa Física -->
+            <div id="campos_pf" class="conditional-field">
+                <div class="form-group">
+                    <label for="cpf">CPF *</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+                </div>
+            </div>
+
+            <!-- Campos para Pessoa Jurídica -->
+            <div id="campos_pj" class="conditional-field">
+                <div class="form-group">
+                    <label for="razao_social">Razão Social *</label>
+                    <input type="text" id="razao_social" name="razao_social">
+                </div>
+
+                <div class="form-group">
+                    <label for="cnpj">CNPJ *</label>
+                    <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00">
+                </div>
+
+                <div class="form-group">
+                    <label for="porte_juridico">Porte Jurídico *</label>
+                    <select id="porte_juridico" name="porte_juridico">
+                        <option value="">Selecione...</option>
+                        <option value="MEI">MEI</option>
+                        <option value="LTDA">LTDA</option>
+                        <option value="SA">SA</option>
+                        <option value="EIRELI">EIRELI</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha *</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Senha *</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="nextStep()">Próximo</button>
+            </div>
+        </form>
+
+        <!-- Step 2: Dados KYC -->
+        <form id="kycForm" class="form-step">
+            <div id="kyc-content">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">Anterior</button>
+                <button type="button" class="btn" onclick="saveKYC()">Salvar Rascunho</button>
+                <button type="button" class="btn" onclick="submitKYC()">Enviar para Aprovação</button>
+            </div>
+        </form>
+
+        <div id="alert" class="alert" style="display: none;"></div>
+
+        <p style="margin-top: 2rem; color: #666;">
+            Já tem uma conta? <a href="/login" style="color: #667eea; text-decoration: none;">Faça login</a>
+        </p>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let userData = {};
+
+        function toggleTipoConta() {
+            const tipoConta = document.getElementById('tipo_conta').value;
+            const camposPF = document.getElementById('campos_pf');
+            const camposPJ = document.getElementById('campos_pj');
+
+            camposPF.classList.remove('show');
+            camposPJ.classList.remove('show');
+
+            if (tipoConta === 'PF') {
+                camposPF.classList.add('show');
+            } else if (tipoConta === 'PJ') {
+                camposPJ.classList.add('show');
+            }
+        }
+
+        function nextStep() {
+            if (validateStep1()) {
+                currentStep = 2;
+                updateSteps();
+                loadKYCForm();
+            }
+        }
+
+        function prevStep() {
+            currentStep = 1;
+            updateSteps();
+        }
+
+        function updateSteps() {
+            document.getElementById('step1').className = currentStep >= 1 ? 'step active' : 'step';
+            document.getElementById('step2').className = currentStep >= 2 ? 'step active' : 'step';
+            
+            document.getElementById('registerForm').className = currentStep === 1 ? 'form-step active' : 'form-step';
+            document.getElementById('kycForm').className = currentStep === 2 ? 'form-step active' : 'form-step';
+        }
+
+        function validateStep1() {
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const tipoConta = document.getElementById('tipo_conta').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (!nome || !email || !telefone || !tipoConta || !password) {
+                showAlert('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('As senhas não coincidem.', 'error');
+                return false;
+            }
+
+            // Validar campos específicos por tipo de conta
+            if (tipoConta === 'PF') {
+                const cpf = document.getElementById('cpf').value;
+                if (!cpf) {
+                    showAlert('CPF é obrigatório para Pessoa Física.', 'error');
+                    return false;
+                }
+            } else if (tipoConta === 'PJ') {
+                const razaoSocial = document.getElementById('razao_social').value;
+                const cnpj = document.getElementById('cnpj').value;
+                const porteJuridico = document.getElementById('porte_juridico').value;
+                
+                if (!razaoSocial || !cnpj || !porteJuridico) {
+                    showAlert('Por favor, preencha todos os campos para Pessoa Jurídica.', 'error');
+                    return false;
+                }
+            }
+
+            // Salvar dados do step 1
+            userData = {
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                tipo_conta: tipoConta,
+                password: password
+            };
+
+            if (tipoConta === 'PF') {
+                userData.cpf = document.getElementById('cpf').value;
+            } else {
+                userData.razao_social = document.getElementById('razao_social').value;
+                userData.cnpj = document.getElementById('cnpj').value;
+                userData.porte_juridico = document.getElementById('porte_juridico').value;
+            }
+
+            return true;
+        }
+
+        function loadKYCForm() {
+            const kycContent = document.getElementById('kyc-content');
+            const tipoConta = userData.tipo_conta;
+
+            let html = `
+                <h3 style="margin-bottom: 1.5rem; color: #667eea;">Dados Complementares</h3>
+                
+                <div class="form-group">
+                    <label for="setor_atividade">Setor de Atividade *</label>
+                    <input type="text" id="setor_atividade" name="setor_atividade" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="faturamento_mensal">Faturamento Mensal *</label>
+                    <input type="text" id="faturamento_mensal" name="faturamento_mensal" required>
+                </div>
+            `;
+
+            if (tipoConta === 'PF') {
+                html += `
+                    <div class="form-group">
+                        <label for="nome_mae">Nome da Mãe *</label>
+                        <input type="text" id="nome_mae" name="nome_mae" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_nascimento">Data de Nascimento *</label>
+                        <input type="date" id="data_nascimento" name="data_nascimento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="documento_responsavel">Documento do Responsável (RG ou CNH) *</label>
+                        <input type="file" id="documento_responsavel" name="documento_responsavel" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="form-group">
+                        <label for="nome_responsavel">Nome do Responsável Legal *</label>
+                        <input type="text" id="nome_responsavel" name="nome_responsavel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cpf_responsavel">CPF do Responsável Legal *</label>
+                        <input type="text" id="cpf_responsavel" name="cpf_responsavel" placeholder="000.000.000-00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nome_mae">Nome da Mãe do Responsável *</label>
+                        <input type="text" id="nome_mae" name="nome_mae" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data_nascimento_responsavel">Data de Nascimento do Responsável *</label>
+                        <input type="date" id="data_nascimento_responsavel" name="data_nascimento_responsavel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="documento_responsavel">Documento do Responsável (RG ou CNH) *</label>
+                        <input type="file" id="documento_responsavel" name="documento_responsavel" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+
+                    <div class="form-group" id="contrato_social_group">
+                        <label for="contrato_social">Contrato Social *</label>
+                        <input type="file" id="contrato_social" name="contrato_social" accept=".pdf">
+                        <small style="color: #666;">Obrigatório somente se o porte jurídico não for MEI</small>
+                    </div>
+                `;
+            }
+
+            kycContent.innerHTML = html;
+
+            // Mostrar/ocultar contrato social baseado no porte jurídico
+            if (tipoConta === 'PJ') {
+                const porteJuridico = userData.porte_juridico;
+                const contratoSocialGroup = document.getElementById('contrato_social_group');
+                const contratoSocialInput = document.getElementById('contrato_social');
+                
+                if (porteJuridico === 'MEI') {
+                    contratoSocialInput.required = false;
+                    contratoSocialGroup.style.display = 'none';
+                } else {
+                    contratoSocialInput.required = true;
+                    contratoSocialGroup.style.display = 'block';
+                }
+            }
+        }
+
+        function saveKYC() {
+            // Salvar como rascunho
+            submitKYCData('rascunho');
+        }
+
+        function submitKYC() {
+            // Enviar para aprovação
+            submitKYCData('pendente');
+        }
+
+        function submitKYCData(status) {
+            const formData = new FormData();
+            
+            // Adicionar dados do step 1
+            Object.keys(userData).forEach(key => {
+                formData.append(key, userData[key]);
+            });
+
+            // Adicionar dados do KYC
+            formData.append('setor_atividade', document.getElementById('setor_atividade').value);
+            formData.append('faturamento_mensal', document.getElementById('faturamento_mensal').value);
+            formData.append('status', status);
+
+            if (userData.tipo_conta === 'PF') {
+                formData.append('nome_mae', document.getElementById('nome_mae').value);
+                formData.append('data_nascimento', document.getElementById('data_nascimento').value);
+            } else {
+                formData.append('nome_responsavel', document.getElementById('nome_responsavel').value);
+                formData.append('cpf_responsavel', document.getElementById('cpf_responsavel').value);
+                formData.append('nome_mae', document.getElementById('nome_mae').value);
+                formData.append('data_nascimento_responsavel', document.getElementById('data_nascimento_responsavel').value);
+            }
+
+            // Adicionar arquivos
+            const documentoResponsavel = document.getElementById('documento_responsavel').files[0];
+            if (documentoResponsavel) {
+                formData.append('documento_responsavel', documentoResponsavel);
+            }
+
+            if (userData.tipo_conta === 'PJ') {
+                const contratoSocial = document.getElementById('contrato_social').files[0];
+                if (contratoSocial) {
+                    formData.append('contrato_social', contratoSocial);
+                }
+            }
+
+            // Enviar dados
+            fetch('/api/registrar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    if (status === 'pendente') {
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    }
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('Erro ao enviar dados. Tente novamente.', 'error');
+            });
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Máscaras para CPF e CNPJ
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.getElementById('cpf');
+            const cnpjInput = document.getElementById('cnpj');
+            const cpfResponsavelInput = document.getElementById('cpf_responsavel');
+
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
+
+            if (cnpjInput) {
+                cnpjInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
+
+            if (cpfResponsavelInput) {
+                cpfResponsavelInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

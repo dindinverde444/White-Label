@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚪 Gateway Completo - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .transaction-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-concluido {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-processando {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🚪 Gateway Completo</div>
+            <div class="user-info">
+                <span id="username">Usuário</span>
+                <button class="btn" onclick="logout()">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" id="total-transacoes">0</div>
+                <div class="stat-label">Total de Transações</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number" id="valor-total">R$ 0,00</div>
+                <div class="stat-label">Valor Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔐</div>
+                <div class="stat-number" id="api-key">...</div>
+                <div class="stat-label">API Key</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number" id="status">Online</div>
+                <div class="stat-label">Status</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>📤 Nova Requisição</h2>
+                <form id="gateway-form">
+                    <div class="form-group">
+                        <label for="tipo-servico">Tipo de Serviço:</label>
+                        <select id="tipo-servico" required>
+                            <option value="">Selecione um serviço...</option>
+                            <option value="usuario">👤 Usuário</option>
+                            <option value="produto">📦 Produto</option>
+                            <option value="pedido">🛒 Pedido</option>
+                            <option value="pagamento">💳 Pagamento</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valor">Valor (R$):</label>
+                        <input type="number" id="valor" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dados-adicionais">Dados Adicionais (JSON):</label>
+                        <textarea id="dados-adicionais" rows="4" placeholder='{"cliente": "João Silva", "email": "joao@email.com"}'></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-full">🚀 Processar Requisição</button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Processando requisição...</p>
+                </div>
+
+                <div id="result"></div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Últimas Transações</h2>
+                <div id="transacoes-lista">
+                    <p style="text-align: center; color: #666; padding: 1rem;">
+                        Nenhuma transação ainda...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Atividades Recentes</h2>
+            <div id="logs-lista">
+                <p style="text-align: center; color: #666; padding: 1rem;">
+                    Nenhuma atividade registrada...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = localStorage.getItem('gateway_token');
+        let currentUser = JSON.parse(localStorage.getItem('gateway_user') || '{}');
+
+        // Verificar autenticação
+        if (!currentToken) {
+            window.location.href = '/login';
+        }
+
+        // Atualizar interface
+        document.getElementById('username').textContent = currentUser.username || 'Usuário';
+        document.getElementById('api-key').textContent = currentUser.api_key ? currentUser.api_key.substring(0, 8) + '...' : '...';
+
+        // Função para fazer requisições autenticadas
+        async function authenticatedRequest(url, options = {}) {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentToken}`,
+                    ...options.headers
+                }
+            });
+            
+            if (response.status === 401) {
+                logout();
+                return null;
+            }
+            
+            return response.json();
+        }
+
+        // Função para processar requisição
+        async function processarRequisicao(dados) {
+            try {
+                const response = await authenticatedRequest('/api/processar', {
+                    method: 'POST',
+                    body: JSON.stringify(dados)
+                });
+                
+                return response;
+            } catch (error) {
+                return { erro: 'Erro na comunicação com o servidor' };
+            }
+        }
+
+        // Função para atualizar estatísticas
+        async function atualizarEstatisticas() {
+            try {
+                const stats = await authenticatedRequest('/api/estatisticas');
+                
+                if (stats) {
+                    document.getElementById('total-transacoes').textContent = stats.total_transacoes || 0;
+                    document.getElementById('valor-total').textContent = `R$ ${(stats.valor_total || 0).toFixed(2)}`;
+                    
+                    // Atualizar transações
+                    const transacoesLista = document.getElementById('transacoes-lista');
+                    if (stats.transacoes && stats.transacoes.length > 0) {
+                        transacoesLista.innerHTML = stats.transacoes.map(t => `
+                            <div class="transaction-item">
+                                <div>
+                                    <strong>${t.tipo}</strong><br>
+                                    <small>R$ ${t.valor}</small>
+                                </div>
+                                <span class="transaction-status status-${t.status}">${t.status}</span>
+                            </div>
+                        `).join('');
+                    } else {
+                        transacoesLista.innerHTML = '<p style="text-align: center; color: #666; padding: 1rem;">Nenhuma transação ainda...</p>';
+                    }
+                    
+                    // Atualizar logs
+                    const logsLista = document.getElementById('logs-lista');
+                    if (stats.logs && stats.logs.length > 0) {
+                        logsLista.innerHTML = stats.logs.map(l => `
+                            <div class="log-item">
+                                <div><strong>${l.acao}</strong></div>
+                                <div>${l.detalhes}</div>
+                                <div class="log-time">${l.created_at}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        logsLista.innerHTML = '<p style="text-align: center; color: #666; padding: 1rem;">Nenhuma atividade registrada...</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+            }
+        }
+
+        // Event listener para o formulário
+        document.getElementById('gateway-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const tipoServico = document.getElementById('tipo-servico').value;
+            const valor = document.getElementById('valor').value;
+            const dadosAdicionais = document.getElementById('dados-adicionais').value;
+            
+            // Construir dados da requisição
+            const dados = {
+                tipo: tipoServico,
+                valor: parseFloat(valor) || 0
+            };
+            
+            // Adicionar dados extras se fornecidos
+            if (dadosAdicionais.trim()) {
+                try {
+                    const extras = JSON.parse(dadosAdicionais);
+                    Object.assign(dados, extras);
+                } catch (error) {
+                    alert('Erro no formato JSON dos dados adicionais');
+                    return;
+                }
+            }
+            
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').innerHTML = '';
+            
+            // Processar requisição
+            const resultado = await processarRequisicao(dados);
+            
+            // Esconder loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Mostrar resultado
+            const resultDiv = document.getElementById('result');
+            if (resultado.erro) {
+                resultDiv.innerHTML = `<div class="alert alert-error"><strong>❌ Erro:</strong> ${resultado.erro}</div>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>✅ Sucesso!</strong><br>
+                        <strong>Transaction ID:</strong> ${resultado.transaction_id}<br>
+                        <strong>Serviço:</strong> ${resultado.servico}<br>
+                        <strong>URL:</strong> ${resultado.url}<br>
+                        <strong>Mensagem:</strong> ${resultado.mensagem}<br>
+                        <strong>Timestamp:</strong> ${resultado.timestamp}
+                    </div>
+                `;
+            }
+            
+            // Atualizar estatísticas
+            setTimeout(atualizarEstatisticas, 500);
+        });
+
+        // Função de logout
+        function logout() {
+            localStorage.removeItem('gateway_token');
+            localStorage.removeItem('gateway_user');
+            window.location.href = '/login';
+        }
+
+        // Atualizar estatísticas na carga da página
+        document.addEventListener('DOMContentLoaded', function() {
+            atualizarEstatisticas();
+        });
+
+        // Atualizar estatísticas a cada 30 segundos
+        setInterval(atualizarEstatisticas, 30000);
+    </script>
+</body>
+</html>

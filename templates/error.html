@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro - Gateway Pay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0a0a0b;
+        }
+        .gradient-rublion { 
+            background: linear-gradient(135deg, #f472b6, #ec4899, #be185d);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+    <div class="text-center max-w-md mx-auto px-4">
+        <div class="mb-8">
+            <i data-lucide="alert-triangle" class="w-24 h-24 text-red-500 mx-auto mb-4"></i>
+            <h1 class="text-4xl font-bold text-white mb-4">Ops! Algo deu errado</h1>
+            <p class="text-gray-400 mb-2">Ocorreu um erro inesperado.</p>
+            {% if error %}
+                <p class="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg p-3 mt-4">
+                    {{ error }}
+                </p>
+            {% endif %}
+        </div>
+        
+        <div class="space-y-4">
+            <button onclick="window.location.reload()" 
+                    class="inline-block gradient-rublion px-6 py-3 rounded-lg text-white font-medium hover:opacity-90 transition-opacity">
+                <i data-lucide="refresh-cw" class="w-5 h-5 inline mr-2"></i>
+                Tentar Novamente
+            </button>
+            
+            <div>
+                <a href="/" class="text-pink-400 hover:text-pink-300 transition-colors">
+                    Voltar ao Início
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

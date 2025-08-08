@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Confirmado - Gateway Pay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0a0a0b;
+        }
+        .bg-rublion-dark { background-color: #0a0a0b; }
+        .bg-rublion-card { background-color: #161618; }
+        .text-rublion-pink { color: #f472b6; }
+        .bg-rublion-pink { background-color: #f472b6; }
+        .gradient-rublion { 
+            background: linear-gradient(135deg, #f472b6, #ec4899, #be185d);
+        }
+    </style>
+</head>
+<body class="bg-rublion-dark text-white min-h-screen">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="max-w-md w-full mx-4">
+            <!-- Card de Sucesso -->
+            <div class="bg-rublion-card rounded-2xl p-8 border border-gray-800 shadow-2xl">
+                <div class="text-center">
+                    <!-- Ícone de Sucesso -->
+                    <div class="w-20 h-20 gradient-rublion rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="check" class="w-10 h-10 text-white"></i>
+                    </div>
+                    
+                    <h1 class="text-3xl font-bold text-white mb-4">Pagamento Confirmado!</h1>
+                    <p class="text-gray-400 mb-8">
+                        Seu pagamento foi processado com sucesso. Você receberá um e-mail de confirmação em breve.
+                    </p>
+                    
+                    <!-- Informações do Pagamento -->
+                    <div class="bg-gray-800/50 rounded-lg p-6 mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-400">Status:</span>
+                            <span class="text-green-400 font-medium">Aprovado</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-400">Método:</span>
+                            <span class="text-white font-medium">PIX</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-400">Data:</span>
+                            <span class="text-white font-medium" id="payment-date"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Botões -->
+                    <div class="space-y-3">
+                        <button onclick="window.location.href='/'" 
+                                class="w-full bg-rublion-pink hover:bg-rublion-pink/80 px-6 py-3 rounded-lg text-white font-bold transition-colors">
+                            <i data-lucide="home" class="w-5 h-5 inline mr-2"></i>
+                            Voltar ao Início
+                        </button>
+                        
+                        <button onclick="window.print()" 
+                                class="w-full bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg text-white font-medium transition-colors">
+                            <i data-lucide="printer" class="w-5 h-5 inline mr-2"></i>
+                            Imprimir Comprovante
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="text-center mt-8">
+                <p class="text-gray-500 text-sm">
+                    Compra segura processada por Gateway Pay
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Definir data atual
+            const now = new Date();
+            document.getElementById('payment-date').textContent = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        });
+    </script>
+</body>
+</html>

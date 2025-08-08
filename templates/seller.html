@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Seller - Gateway de Pagamentos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0a0a0b;
+        }
+        .bg-rublion-dark { background-color: #0a0a0b; }
+        .bg-rublion-card { background-color: #161618; }
+        .bg-rublion-sidebar { background-color: #1a1a1c; }
+        .text-rublion-pink { color: #f472b6; }
+        .bg-rublion-pink { background-color: #f472b6; }
+        .border-rublion-pink { border-color: #f472b6; }
+        .gradient-rublion { 
+            background: linear-gradient(135deg, #f472b6, #ec4899, #be185d);
+        }
+        .chart-dark {
+            background-color: #161618;
+            border-radius: 12px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        rublion: {
+                            dark: '#0a0a0b',
+                            card: '#161618',
+                            sidebar: '#1a1a1c',
+                            pink: '#f472b6',
+                            'pink-dark': '#ec4899',
+                            'pink-darker': '#be185d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-rublion-dark text-white min-h-screen">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-rublion-sidebar border-r border-gray-800 fixed h-full">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-rublion rounded-lg flex items-center justify-center">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-white font-bold text-lg">Gateway Pay</h1>
+                        <p class="text-gray-400 text-sm">Painel Seller</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-1">
+                <a href="#dashboard" onclick="showSellerSection('dashboard')" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-rublion-pink/20 text-rublion-pink font-medium">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#vendas" onclick="showSellerSection('vendas')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span>Vendas</span>
+                </a>
+                <a href="#produtos" onclick="showSellerSection('produtos')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                    <span>Produtos</span>
+                </a>
+                <a href="#marketplace" onclick="showSellerSection('marketplace')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="store" class="w-5 h-5"></i>
+                    <span>Marketplace</span>
+                </a>
+                <a href="#integracoes" onclick="showSellerSection('integracoes')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="plug" class="w-5 h-5"></i>
+                    <span>Integrações</span>
+                </a>
+                <a href="#financas" onclick="showSellerSection('financas')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                    <span>Finanças</span>
+                </a>
+                <a href="#indique-ganhe" onclick="showSellerSection('indique-ganhe')" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                    <span>Indique e Ganhe</span>
+                </a>
+            </nav>
+
+            <!-- User Profile & Theme Toggle -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
+                <!-- Theme Toggle -->
+                <div class="mb-4 flex items-center justify-between">
+                    <span class="text-sm text-gray-400">Tema</span>
+                    <button onclick="toggleTheme()" class="flex items-center space-x-2 text-gray-300 hover:text-white">
+                        <i data-lucide="moon" class="w-4 h-4"></i>
+                        <span class="text-sm">Escuro</span>
+                    </button>
+                </div>
+                
+                <!-- User Info -->
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 gradient-rublion rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-white font-medium truncate">Patrick Jose</p>
+                        <p class="text-gray-400 text-sm truncate">patrick@gateway.com</p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-64">
+            <!-- Header com Saudação -->
+            <header class="gradient-rublion p-8">
+                <div class="max-w-7xl mx-auto">
+                    <h1 class="text-3xl font-bold text-white mb-2">
+                        Bem-vindo de volta <span class="text-white/90">PATRICK JOSE CAMILO DA SILVA</span>
+                    </h1>
+                    <p class="text-pink-100">Vamos acompanhar suas vendas de hoje</p>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="p-8 space-y-8">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="section-content">
+                <!-- Primeira linha: Saldo + Charts + Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Saldo Disponível -->
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white">Saldo Disponível</h3>
+                            <div class="w-10 h-10 gradient-rublion rounded-lg flex items-center justify-center">
+                                <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
+                            </div>
+                        </div>
+                        <p class="text-3xl font-bold text-rublion-pink mb-2" id="saldoDisponivel">R$ 0,00</p>
+                        <button class="text-sm text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="eye-off" class="w-4 h-4 inline mr-1"></i>
+                            Ocultar valores
+                        </button>
+                    </div>
+
+                    <!-- Gráfico de Vendas -->
+                    <div class="lg:col-span-2 bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-white">Visão Geral</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="changeChartFilter('hoje')" class="px-3 py-1 bg-rublion-pink text-white text-sm rounded-lg">Hoje</button>
+                                <button onclick="changeChartFilter('7dias')" class="px-3 py-1 text-gray-400 hover:text-white text-sm rounded-lg">7 dias</button>
+                                <button onclick="changeChartFilter('14dias')" class="px-3 py-1 text-gray-400 hover:text-white text-sm rounded-lg">14 dias</button>
+                                <button onclick="changeChartFilter('30dias')" class="px-3 py-1 text-gray-400 hover:text-white text-sm rounded-lg">30 dias</button>
+                            </div>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Cards de Vendas -->
+                    <div class="space-y-4">
+                        <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-sm text-gray-400">Vendas hoje</h4>
+                                <i data-lucide="trending-up" class="w-4 h-4 text-rublion-pink"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-white" id="vendasHoje">R$ 0,00</p>
+                        </div>
+
+                        <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-sm text-gray-400">Vendas no mês</h4>
+                                <i data-lucide="calendar" class="w-4 h-4 text-rublion-pink"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-white" id="vendasMes">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segunda linha: Premiação + Formas de Pagamento -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Quadro de Premiação -->
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h3 class="text-lg font-semibold text-white mb-6">Quadro de Premiação</h3>
+                        
+                        <!-- Imagem do Prêmio -->
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="w-24 h-24 gradient-rublion rounded-full flex items-center justify-center">
+                                <i data-lucide="trophy" class="w-12 h-12 text-white"></i>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Progresso -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-400">Progresso para 10K</span>
+                                <span class="text-sm text-rublion-pink font-medium">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-rublion-pink to-pink-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <p class="text-white font-bold mt-2">R$ 0,00 / 10K</p>
+                        </div>
+
+                        <!-- Mensagem Motivacional -->
+                        <div class="bg-gradient-to-r from-rublion-pink/10 to-pink-400/10 rounded-lg p-4 border border-rublion-pink/20">
+                            <p class="text-gray-300 text-sm">
+                                🚀 Comece suas vendas para acompanhar seu progresso rumo à meta de <span class="text-rublion-pink font-bold">R$ 10.000,00</span>!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Formas de Pagamento -->
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h3 class="text-lg font-semibold text-white mb-6">Formas de Pagamento</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- PIX -->
+                            <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">PIX</p>
+                                        <p class="text-gray-400 text-sm">Instantâneo</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-white font-bold">0</p>
+                                    <p class="text-gray-400 text-sm">transações</p>
+                                </div>
+                            </div>
+
+                            <!-- Cartão -->
+                            <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <i data-lucide="credit-card" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">Cartão</p>
+                                        <p class="text-gray-400 text-sm">Crédito/Débito</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-white font-bold">0</p>
+                                    <p class="text-gray-400 text-sm">transações</p>
+                                </div>
+                            </div>
+
+                            <!-- Boleto -->
+                            <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">Boleto</p>
+                                        <p class="text-gray-400 text-sm">1-3 dias úteis</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-white font-bold">0</p>
+                                    <p class="text-gray-400 text-sm">transações</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                
+                <!-- Vendas Section -->
+                <div id="vendas-section" class="section-content hidden">
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Gestão de Vendas</h2>
+                        <p class="text-gray-400 mb-4">Acompanhe todas as suas vendas e transações</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h3 class="text-lg font-semibold text-white mb-2">Vendas de Hoje</h3>
+                                <p class="text-2xl font-bold text-rublion-pink">R$ 0,00</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h3 class="text-lg font-semibold text-white mb-2">Total do Mês</h3>
+                                <p class="text-2xl font-bold text-green-400">R$ 0,00</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h3 class="text-lg font-semibold text-white mb-2">Taxa de Conversão</h3>
+                                <p class="text-2xl font-bold text-blue-400">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produtos Section -->
+                <div id="produtos-section" class="section-content hidden">
+                    <!-- Lista de Produtos -->
+                    <div id="produtos-lista" class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Gestão de Produtos</h2>
+                        <p class="text-gray-400 mb-4">Gerencie seu catálogo de produtos</p>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex space-x-4">
+                                <button onclick="showCreateProductForm()" class="bg-rublion-pink hover:bg-rublion-pink-dark px-4 py-2 rounded-lg text-white font-medium transition-colors">
+                                    <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+                                    Novo Produto
+                                </button>
+                                <button class="border border-gray-600 hover:border-gray-500 px-4 py-2 rounded-lg text-gray-300 hover:text-white transition-colors">
+                                    Importar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center py-12">
+                            <i data-lucide="package" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                            <p class="text-gray-400">Nenhum produto cadastrado ainda</p>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Criação de Produto -->
+                    <div id="produtos-form" class="bg-rublion-card rounded-xl p-6 border border-gray-800 hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-white">Criar Novo Produto</h2>
+                            <button onclick="hideCreateProductForm()" class="text-gray-400 hover:text-white transition-colors">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+
+                        <form id="create-product-form" class="space-y-6">
+                            <!-- Informações Básicas -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Nome do Produto -->
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">
+                                        Nome do Produto <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="product-name" required 
+                                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                           placeholder="Digite o nome do produto">
+                                </div>
+
+                                <!-- Valor -->
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">
+                                        Valor <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">R$</span>
+                                        <input type="number" id="product-price" required step="0.01" min="0"
+                                               class="w-full bg-gray-800 border border-gray-600 rounded-lg pl-10 pr-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                               placeholder="0,00">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Texto de Cabeçalho -->
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">
+                                    Texto de Cabeçalho <span class="text-red-500">*</span>
+                                </label>
+                                <textarea id="product-header" required rows="3"
+                                          class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                          placeholder="Texto que aparecerá no topo da página de vendas"></textarea>
+                            </div>
+
+                            <!-- Página de Obrigado -->
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">
+                                    Página de Obrigado <span class="text-red-500">*</span>
+                                </label>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" id="thank-page-default" name="thank-page-type" value="default" checked
+                                               class="w-4 h-4 text-rublion-pink bg-gray-800 border-gray-600 focus:ring-rublion-pink">
+                                        <label for="thank-page-default" class="text-white">Página padrão</label>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <input type="radio" id="thank-page-custom" name="thank-page-type" value="custom"
+                                               class="w-4 h-4 text-rublion-pink bg-gray-800 border-gray-600 focus:ring-rublion-pink">
+                                        <label for="thank-page-custom" class="text-white">Página personalizada</label>
+                                    </div>
+                                    <div id="custom-thank-page" class="hidden">
+                                        <input type="url" id="thank-page-url" 
+                                               class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                               placeholder="https://seusite.com/obrigado">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Suporte e Garantia -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- E-mail de Suporte -->
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">
+                                        E-mail de Suporte
+                                    </label>
+                                    <input type="email" id="support-email"
+                                           class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                           placeholder="suporte@seusite.com">
+                                </div>
+
+                                <!-- Tempo de Garantia -->
+                                <div>
+                                    <label class="block text-sm font-medium text-white mb-2">
+                                        Tempo de Garantia
+                                    </label>
+                                    <div class="flex space-x-2">
+                                        <input type="number" id="warranty-time" min="0"
+                                               class="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none"
+                                               placeholder="30">
+                                        <select id="warranty-unit" class="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-rublion-pink focus:outline-none">
+                                            <option value="dias">Dias</option>
+                                            <option value="meses">Meses</option>
+                                            <option value="anos">Anos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload de Imagens -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-4">Imagens do Produto</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <!-- Foto do Produto -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-white mb-2">
+                                            Foto do Produto <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-rublion-pink transition-colors">
+                                            <input type="file" id="product-image" accept="image/*" class="hidden" onchange="previewImage(this, 'product-preview')">
+                                            <div id="product-preview" class="space-y-2">
+                                                <i data-lucide="image" class="w-12 h-12 text-gray-400 mx-auto"></i>
+                                                <p class="text-gray-400 text-sm">Clique para escolher</p>
+                                                <p class="text-gray-500 text-xs">PNG, JPG até 5MB</p>
+                                            </div>
+                                            <button type="button" onclick="document.getElementById('product-image').click()" 
+                                                    class="mt-2 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm text-white transition-colors">
+                                                Escolher Arquivo
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Banner do Produto -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-white mb-2">
+                                            Banner do Produto
+                                        </label>
+                                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-rublion-pink transition-colors">
+                                            <input type="file" id="product-banner" accept="image/*" class="hidden" onchange="previewImage(this, 'banner-preview')">
+                                            <div id="banner-preview" class="space-y-2">
+                                                <i data-lucide="image" class="w-12 h-12 text-gray-400 mx-auto"></i>
+                                                <p class="text-gray-400 text-sm">Clique para escolher</p>
+                                                <p class="text-gray-500 text-xs">PNG, JPG até 5MB</p>
+                                            </div>
+                                            <button type="button" onclick="document.getElementById('product-banner').click()" 
+                                                    class="mt-2 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm text-white transition-colors">
+                                                Escolher Arquivo
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Banner Final -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-white mb-2">
+                                            Banner Final
+                                        </label>
+                                        <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-rublion-pink transition-colors">
+                                            <input type="file" id="final-banner" accept="image/*" class="hidden" onchange="previewImage(this, 'final-preview')">
+                                            <div id="final-preview" class="space-y-2">
+                                                <i data-lucide="image" class="w-12 h-12 text-gray-400 mx-auto"></i>
+                                                <p class="text-gray-400 text-sm">Clique para escolher</p>
+                                                <p class="text-gray-500 text-xs">PNG, JPG até 5MB</p>
+                                            </div>
+                                            <button type="button" onclick="document.getElementById('final-banner').click()" 
+                                                    class="mt-2 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm text-white transition-colors">
+                                                Escolher Arquivo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Opções de Exibição -->
+                            <div class="bg-gray-800/50 rounded-lg p-4">
+                                <h3 class="text-lg font-semibold text-white mb-4">Configurações de Exibição</h3>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="text-white font-medium">Exibir no Marketplace</label>
+                                        <p class="text-gray-400 text-sm">Permitir que outros usuários vejam e comprem este produto</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="show-marketplace" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rublion-pink/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rublion-pink"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Botões de Ação -->
+                            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700">
+                                <button type="button" onclick="hideCreateProductForm()" 
+                                        class="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+                                    Cancelar
+                                </button>
+                                <button type="submit" 
+                                        class="px-6 py-2 bg-rublion-pink hover:bg-rublion-pink-dark rounded-lg text-white font-medium transition-colors">
+                                    <i data-lucide="save" class="w-4 h-4 inline mr-2"></i>
+                                    Criar Produto
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Marketplace Section -->
+                <div id="marketplace-section" class="section-content hidden">
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Marketplace</h2>
+                        <p class="text-gray-400 mb-4">Explore oportunidades no marketplace</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-gray-800/50 rounded-lg p-6 text-center">
+                                <i data-lucide="store" class="w-12 h-12 text-rublion-pink mx-auto mb-4"></i>
+                                <h3 class="text-lg font-semibold text-white mb-2">Vender Online</h3>
+                                <p class="text-gray-400 text-sm">Configure sua loja virtual</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-6 text-center">
+                                <i data-lucide="trending-up" class="w-12 h-12 text-green-400 mx-auto mb-4"></i>
+                                <h3 class="text-lg font-semibold text-white mb-2">Analytics</h3>
+                                <p class="text-gray-400 text-sm">Acompanhe performance</p>
+                            </div>
+                            <div class="bg-gray-800/50 rounded-lg p-6 text-center">
+                                <i data-lucide="users" class="w-12 h-12 text-blue-400 mx-auto mb-4"></i>
+                                <h3 class="text-lg font-semibold text-white mb-2">Clientes</h3>
+                                <p class="text-gray-400 text-sm">Gerencie relacionamentos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrações Section -->
+                <div id="integracoes-section" class="section-content hidden">
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Integrações</h2>
+                        <p class="text-gray-400 mb-6">Conecte com plataformas e serviços externos</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="border border-gray-700 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-white font-semibold">WooCommerce</h3>
+                                            <p class="text-gray-400 text-sm">E-commerce</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm text-white transition-colors">Conectar</button>
+                                </div>
+                                <p class="text-gray-400 text-sm">Integre sua loja WooCommerce</p>
+                            </div>
+                            <div class="border border-gray-700 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-white font-semibold">Zapier</h3>
+                                            <p class="text-gray-400 text-sm">Automação</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm text-white transition-colors">Conectar</button>
+                                </div>
+                                <p class="text-gray-400 text-sm">Automatize seus processos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Finanças Section -->
+                <div id="financas-section" class="section-content hidden">
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Gestão Financeira</h2>
+                        <p class="text-gray-400 mb-6">Controle suas finanças e receitas</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-green-400 font-semibold">Saldo Disponível</h3>
+                                    <i data-lucide="wallet" class="w-5 h-5 text-green-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-white">R$ 0,00</p>
+                                <button class="mt-4 bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg text-white font-medium transition-colors">
+                                    Solicitar Saque
+                                </button>
+                            </div>
+                            <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-blue-400 font-semibold">A Receber</h3>
+                                    <i data-lucide="clock" class="w-5 h-5 text-blue-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-white">R$ 0,00</p>
+                                <p class="text-sm text-gray-400 mt-2">Nenhum valor pendente</p>
+                            </div>
+                            <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-purple-400 font-semibold">Total Recebido</h3>
+                                    <i data-lucide="trending-up" class="w-5 h-5 text-purple-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold text-white">R$ 0,00</p>
+                                <p class="text-sm text-gray-400 mt-2">Este mês</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800/50 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Histórico de Transações</h3>
+                            <div class="text-center py-8">
+                                <i data-lucide="file-text" class="w-12 h-12 text-gray-600 mx-auto mb-4"></i>
+                                <p class="text-gray-400">Nenhuma transação recente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indique e Ganhe Section -->
+                <div id="indique-ganhe-section" class="section-content hidden">
+                    <div class="bg-rublion-card rounded-xl p-6 border border-gray-800">
+                        <h2 class="text-2xl font-bold text-white mb-6">Indique e Ganhe</h2>
+                        <p class="text-gray-400 mb-6">Convide amigos e ganhe comissões</p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-gradient-to-r from-rublion-pink/10 to-pink-400/10 rounded-lg p-6 border border-rublion-pink/20">
+                                <h3 class="text-lg font-semibold text-white mb-4">Seu Link de Indicação</h3>
+                                <div class="flex items-center space-x-2 mb-4">
+                                    <input type="text" value="https://gateway.com/ref/patrick123" class="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white" readonly>
+                                    <button onclick="copyReferralLink()" class="bg-rublion-pink hover:bg-rublion-pink-dark px-4 py-2 rounded-lg text-white font-medium transition-colors">
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <p class="text-gray-400 text-sm">Compartilhe este link e ganhe 5% de comissão sobre as vendas dos seus indicados!</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-white mb-4">Suas Indicações</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-gray-800/50 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-white">Indicações Totais</span>
+                                            <span class="text-2xl font-bold text-rublion-pink">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-800/50 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-white">Comissões Ganhas</span>
+                                            <span class="text-2xl font-bold text-green-400">R$ 0,00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let dashboardData = {};
+        let salesChart;
+        let userStatus = null;
+
+        // Inicializar ícones Lucide e carregar dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            checkUserStatus();
+            
+            // Remover auto-reload para evitar comportamento inesperado
+            // setInterval(loadDashboard, 30000);
+        });
+
+        // Função para verificar status do usuário
+        async function checkUserStatus() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const response = await fetch('/api/user/status', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    userStatus = await response.json();
+                    
+                    if (userStatus.is_pending) {
+                        showPendingApprovalMessage();
+                    } else if (userStatus.is_rejected) {
+                        showRejectedMessage();
+                    } else {
+                        loadDashboard();
+                    }
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                } else {
+                    console.error('Erro ao verificar status do usuário');
+                    loadDashboard(); // Carregar dashboard mesmo com erro
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                loadDashboard(); // Carregar dashboard mesmo com erro
+            }
+        }
+
+        // Função para mostrar mensagem de aprovação pendente
+        function showPendingApprovalMessage() {
+            const mainContent = document.querySelector('main');
+            mainContent.innerHTML = `
+                <div class="flex items-center justify-center min-h-screen">
+                    <div class="text-center max-w-md mx-auto">
+                        <div class="w-24 h-24 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="clock" class="w-12 h-12 text-yellow-500"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mb-4">Cadastro em Análise</h2>
+                        <p class="text-gray-400 mb-6">
+                            Seu cadastro está sendo analisado pela nossa equipe. 
+                            Assim que for aprovado, todas as funcionalidades serão liberadas.
+                        </p>
+                        <div class="bg-gray-800/50 rounded-lg p-4 mb-6">
+                            <p class="text-sm text-gray-300">
+                                <strong>Status:</strong> Pendente de Aprovação<br>
+                                <strong>Próximo passo:</strong> Aguardando análise do administrador
+                            </p>
+                        </div>
+                        <button onclick="logout()" class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg text-white transition-colors">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Função para mostrar mensagem de rejeição
+        function showRejectedMessage() {
+            const mainContent = document.querySelector('main');
+            mainContent.innerHTML = `
+                <div class="flex items-center justify-center min-h-screen">
+                    <div class="text-center max-w-md mx-auto">
+                        <div class="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="x-circle" class="w-12 h-12 text-red-500"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mb-4">Cadastro Rejeitado</h2>
+                        <p class="text-gray-400 mb-6">
+                            Infelizmente seu cadastro foi rejeitado. 
+                            Entre em contato conosco para mais informações.
+                        </p>
+                        <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+                            <p class="text-sm text-red-300">
+                                <strong>Status:</strong> Rejeitado<br>
+                                <strong>Contato:</strong> suporte@gateway.com
+                            </p>
+                        </div>
+                        <button onclick="logout()" class="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg text-white transition-colors">
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Função para carregar dados do dashboard
+        async function loadDashboard() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const response = await fetch('/api/dashboard/seller', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    dashboardData = await response.json();
+                    updateDashboard();
+                } else if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                } else {
+                    console.error('Erro ao carregar dashboard');
+                    // Se a API falhar, usar dados zerados
+                    dashboardData = {};
+                    updateDashboard();
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                // Em caso de erro, usar dados zerados
+                dashboardData = {};
+                updateDashboard();
+            }
+        }
+
+        // Função para atualizar o dashboard
+        function updateDashboard() {
+            // Começar com dados zerados - dados reais serão carregados da API
+            const vendasHoje = dashboardData.vendas_hoje || 0;
+            const vendasMes = dashboardData.vendas_mes || 0;
+            const saldoDisponivel = dashboardData.saldo_disponivel || 0;
+
+            // Verificar se os valores são números válidos antes de formatar
+            const formatCurrency = (value) => {
+                const numValue = parseFloat(value) || 0;
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numValue);
+            };
+
+            document.getElementById('vendasHoje').textContent = formatCurrency(vendasHoje);
+            document.getElementById('vendasMes').textContent = formatCurrency(vendasMes);
+            document.getElementById('saldoDisponivel').textContent = formatCurrency(saldoDisponivel);
+
+            // Atualizar gráfico
+            updateSalesChart();
+        }
+
+        // Função para atualizar gráfico de vendas com tema escuro da Rublion
+        function updateSalesChart() {
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            if (salesChart) salesChart.destroy();
+            
+            // Dados das horas (00:00 às 23:00)
+            const labels = [];
+            for (let i = 0; i <= 23; i++) {
+                labels.push(i.toString().padStart(2, '0') + ':00');
+            }
+            
+            // Dados zerados - serão preenchidos com dados reais da API
+            const salesData = [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ];
+            
+            salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: dashboardData.vendas_por_hora || salesData,
+                        borderColor: '#f472b6',
+                        backgroundColor: 'rgba(244, 114, 182, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#f472b6',
+                        pointBorderColor: '#161618',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: true,
+                                color: '#374151'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: '#374151'
+                            },
+                            ticks: {
+                                color: '#9CA3AF',
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverBackgroundColor: '#f472b6'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para alternar tema (placeholder)
+        function toggleTheme() {
+            // Por enquanto só um alert, mas pode ser implementado
+            alert('Funcionalidade de alternância de tema em desenvolvimento!');
+        }
+
+        // Função de logout
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+
+        // Função para mostrar seções do seller
+        function showSellerSection(sectionName) {
+            // Ocultar todas as seções
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Mostrar seção selecionada
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            
+            // Atualizar navegação ativa
+            document.querySelectorAll('nav a').forEach(link => {
+                link.className = 'flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors';
+            });
+            
+            document.querySelector(`a[onclick="showSellerSection('${sectionName}')"]`).className = 'flex items-center space-x-3 px-4 py-3 rounded-lg bg-rublion-pink/20 text-rublion-pink font-medium';
+            
+            // Carregar dados específicos da seção
+            if (sectionName === 'produtos') {
+                loadProductsList();
+            } else if (sectionName === 'marketplace') {
+                loadMarketplace();
+            }
+            
+            // Re-inicializar ícones Lucide
+            lucide.createIcons();
+        }
+
+        // Função para filtros do gráfico
+        function changeChartFilter(period) {
+            // Remover classe ativa de todos os botões
+            document.querySelectorAll('button[onclick^="changeChartFilter"]').forEach(btn => {
+                btn.className = 'px-3 py-1 text-gray-400 hover:text-white text-sm rounded-lg';
+            });
+            
+            // Adicionar classe ativa ao botão clicado
+            event.target.className = 'px-3 py-1 bg-rublion-pink text-white text-sm rounded-lg';
+            
+            // Aqui você pode implementar a lógica para filtrar os dados
+            console.log('Filtro selecionado:', period);
+        }
+
+        // Função para copiar link de indicação
+        function copyReferralLink() {
+            const linkInput = document.querySelector('input[value*="ref/patrick123"]');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            // Feedback visual
+            const button = event.target.closest('button');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
+            button.classList.add('bg-green-500');
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.classList.remove('bg-green-500');
+                lucide.createIcons();
+            }, 2000);
+        }
+
+        // Funções para gerenciar formulário de produto
+        function showCreateProductForm() {
+            document.getElementById('produtos-lista').classList.add('hidden');
+            document.getElementById('produtos-form').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function hideCreateProductForm() {
+            document.getElementById('produtos-form').classList.add('hidden');
+            document.getElementById('produtos-lista').classList.remove('hidden');
+            // Limpar formulário
+            document.getElementById('create-product-form').reset();
+            lucide.createIcons();
+        }
+
+        // Função para carregar lista de produtos
+        async function loadProductsList() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/products', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    updateProductsList(result.products);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
+        }
+
+        // Função para atualizar display de produtos
+        function updateProductsList(products) {
+            const listContainer = document.querySelector('#produtos-lista .text-center');
+            
+            if (products && products.length > 0) {
+                const productsHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${products.map(product => `
+                            <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+                                <h3 class="text-lg font-semibold text-white mb-2">${product.name}</h3>
+                                <p class="text-gray-400 text-sm mb-3">${product.header.substring(0, 100)}...</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-2xl font-bold text-rublion-pink">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
+                                    <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
+                                        ${product.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm text-gray-400 mb-4">
+                                    <span><i data-lucide="eye" class="w-4 h-4 inline mr-1"></i>${product.views} views</span>
+                                    <span><i data-lucide="shopping-cart" class="w-4 h-4 inline mr-1"></i>${product.sales} vendas</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="copyCheckoutLink('${product.checkout_url}')" 
+                                            class="flex-1 bg-rublion-pink hover:bg-rublion-pink-dark px-3 py-2 rounded text-white text-sm transition-colors">
+                                        <i data-lucide="copy" class="w-4 h-4 inline mr-1"></i>Copiar Link
+                                    </button>
+                                    <button onclick="window.open('${product.checkout_url}', '_blank')" 
+                                            class="flex-1 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-white text-sm transition-colors">
+                                        <i data-lucide="external-link" class="w-4 h-4 inline mr-1"></i>Ver
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                listContainer.innerHTML = productsHTML;
+            } else {
+                listContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <i data-lucide="package" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                        <p class="text-gray-400">Nenhum produto cadastrado ainda</p>
+                    </div>
+                `;
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Função para carregar marketplace
+        async function loadMarketplace() {
+            try {
+                const response = await fetch('/api/marketplace');
+
+                if (response.ok) {
+                    const result = await response.json();
+                    updateMarketplace(result.products);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar marketplace:', error);
+            }
+        }
+
+        // Função para atualizar display do marketplace
+        function updateMarketplace(products) {
+            const marketplaceSection = document.getElementById('marketplace-section');
+            const marketplaceContent = marketplaceSection.querySelector('.bg-rublion-card');
+            
+            if (products && products.length > 0) {
+                const productsHTML = `
+                    <h2 class="text-2xl font-bold text-white mb-6">Marketplace</h2>
+                    <p class="text-gray-400 mb-6">Explore produtos de outros sellers</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${products.map(product => `
+                            <div class="bg-gray-800/50 rounded-lg p-6 border border-gray-700 hover:border-rublion-pink transition-colors">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-lg font-semibold text-white">${product.name}</h3>
+                                    <span class="text-xs text-gray-400">por ${product.seller_name}</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mb-3">${product.header.substring(0, 100)}...</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-xl font-bold text-rublion-pink">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
+                                    <div class="flex items-center space-x-3 text-sm text-gray-400">
+                                        <span><i data-lucide="eye" class="w-3 h-3 inline mr-1"></i>${product.views}</span>
+                                        <span><i data-lucide="shopping-cart" class="w-3 h-3 inline mr-1"></i>${product.sales}</span>
+                                    </div>
+                                </div>
+                                <button onclick="window.open('${product.checkout_url}', '_blank')" 
+                                        class="w-full bg-rublion-pink hover:bg-rublion-pink-dark px-4 py-2 rounded-lg text-white font-medium transition-colors">
+                                    <i data-lucide="shopping-cart" class="w-4 h-4 inline mr-2"></i>Comprar Agora
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                marketplaceContent.innerHTML = productsHTML;
+            } else {
+                marketplaceContent.innerHTML = `
+                    <h2 class="text-2xl font-bold text-white mb-6">Marketplace</h2>
+                    <p class="text-gray-400 mb-6">Explore produtos de outros sellers</p>
+                    <div class="text-center py-12">
+                        <i data-lucide="store" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                        <p class="text-gray-400">Nenhum produto disponível no marketplace ainda</p>
+                    </div>
+                `;
+            }
+            
+            lucide.createIcons();
+        }
+
+        // Função para preview de imagens
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg mb-2">
+                        <p class="text-gray-400 text-sm">${file.name}</p>
+                        <p class="text-gray-500 text-xs">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Função para mostrar modal com link do checkout
+        function showCheckoutLinkModal(checkoutUrl, productId) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-rublion-card rounded-xl p-8 max-w-md w-full mx-4 border border-gray-800">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="check" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">Produto Criado com Sucesso!</h3>
+                        <p class="text-gray-400">Sua página de checkout foi gerada automaticamente</p>
+                    </div>
+                    
+                    <div class="bg-gray-800/50 rounded-lg p-4 mb-6">
+                        <label class="block text-sm font-medium text-white mb-2">Link do Checkout:</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" value="${checkoutUrl}" readonly 
+                                   class="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm">
+                            <button onclick="copyCheckoutLink('${checkoutUrl}')" 
+                                    class="bg-rublion-pink hover:bg-rublion-pink-dark px-3 py-2 rounded text-white">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-white transition-colors">
+                            Fechar
+                        </button>
+                        <button onclick="window.open('${checkoutUrl}', '_blank')" 
+                                class="flex-1 bg-rublion-pink hover:bg-rublion-pink-dark px-4 py-2 rounded-lg text-white transition-colors">
+                            Ver Página
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        // Função para copiar link do checkout
+        function copyCheckoutLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                const button = event.target.closest('button');
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
+                button.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('bg-green-500');
+                    lucide.createIcons();
+                }, 1500);
+            });
+        }
+
+        // Event listeners para formulário de produto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Alternar página de obrigado personalizada
+            const thankPageRadios = document.querySelectorAll('input[name="thank-page-type"]');
+            const customThankPage = document.getElementById('custom-thank-page');
+            
+            if (thankPageRadios.length > 0) {
+                thankPageRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.value === 'custom') {
+                            customThankPage.classList.remove('hidden');
+                            document.getElementById('thank-page-url').required = true;
+                        } else {
+                            customThankPage.classList.add('hidden');
+                            document.getElementById('thank-page-url').required = false;
+                        }
+                    });
+                });
+            }
+
+            // Submit do formulário de produto
+            const createProductForm = document.getElementById('create-product-form');
+            if (createProductForm) {
+                createProductForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData();
+                    
+                    // Dados básicos
+                    formData.append('name', document.getElementById('product-name').value);
+                    formData.append('price', document.getElementById('product-price').value);
+                    formData.append('header', document.getElementById('product-header').value);
+                    
+                    // Página de obrigado
+                    const thankPageType = document.querySelector('input[name="thank-page-type"]:checked').value;
+                    formData.append('thank_page_type', thankPageType);
+                    if (thankPageType === 'custom') {
+                        formData.append('thank_page_url', document.getElementById('thank-page-url').value);
+                    }
+                    
+                    // Suporte e garantia
+                    formData.append('support_email', document.getElementById('support-email').value);
+                    formData.append('warranty_time', document.getElementById('warranty-time').value);
+                    formData.append('warranty_unit', document.getElementById('warranty-unit').value);
+                    
+                    // Imagens
+                    const productImage = document.getElementById('product-image').files[0];
+                    const productBanner = document.getElementById('product-banner').files[0];
+                    const finalBanner = document.getElementById('final-banner').files[0];
+                    
+                    if (productImage) formData.append('product_image', productImage);
+                    if (productBanner) formData.append('product_banner', productBanner);
+                    if (finalBanner) formData.append('final_banner', finalBanner);
+                    
+                    // Marketplace
+                    formData.append('show_marketplace', document.getElementById('show-marketplace').checked);
+                    
+                    try {
+                        const token = localStorage.getItem('token');
+                        
+                        const response = await fetch('/api/products', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: formData
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            
+                            // Mostrar sucesso
+                            const submitBtn = document.querySelector('#create-product-form button[type="submit"]');
+                            const originalContent = submitBtn.innerHTML;
+                            submitBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 inline mr-2"></i>Produto Criado!';
+                            submitBtn.classList.add('bg-green-500');
+                            
+                            setTimeout(() => {
+                                submitBtn.innerHTML = originalContent;
+                                submitBtn.classList.remove('bg-green-500');
+                                hideCreateProductForm();
+                                
+                                // Mostrar modal com link do checkout
+                                showCheckoutLinkModal(result.checkout_url, result.product_id);
+                                
+                                // Recarregar lista de produtos
+                                loadProductsList();
+                                
+                                lucide.createIcons();
+                            }, 2000);
+                            
+                        } else {
+                            try {
+                                const error = await response.json();
+                                console.error('Erro ao criar produto:', error);
+                                alert(`Erro ao criar produto: ${error.message || 'Erro desconhecido'}`);
+                            } catch (parseError) {
+                                console.error('Erro ao parsear resposta:', parseError);
+                                alert(`Erro ao criar produto: ${response.status} - ${response.statusText}`);
+                            }
+                        }
+                        
+                    } catch (error) {
+                        console.error('Erro:', error);
+                        alert('Erro ao criar produto. Verifique sua conexão e tente novamente.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
