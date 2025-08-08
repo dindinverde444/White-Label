@@ -1,3 +1,4 @@
+HEAD
 # 🚀 White Label - Gateway de Pagamentos
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -298,3 +299,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ---
 
 **White Label Gateway** - Transformando ideias em soluções de pagamento! 💳✨
+=======
+# White-Label
+Gateway de Pagamentos White Label com integração Supabase - Sistema completo de pagamentos com autenticação, dashboard admin/seller, KYC, PIX, cartão e boleto
+77bd8006cb5c2a9e5a321c726434abcb86d42e21
